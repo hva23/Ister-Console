@@ -4,6 +4,7 @@ import com.ister.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserInMemoryRepositoryImpl implements UserRepository {
 
@@ -14,6 +15,18 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
         usersInMemory.add(user);
     }
 
+
+    public void update(User user) {
+
+        Optional<User> dbUserOptional = findById(user.getId());
+        if (dbUserOptional.isPresent()) {
+            User dbUser = dbUserOptional.get();
+            dbUser.setEmail(user.getEmail());
+            dbUser.setPassword(user.getPassword());
+            dbUser.setUsername(user.getUsername());
+        }
+    }
+
     public void delete(User user) {
         usersInMemory.remove(user);
     }
@@ -22,12 +35,12 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
         return usersInMemory;
     }
 
-    public User findById(Long id) {
-        return usersInMemory.stream().filter(u -> u.getId().equals(id)).findFirst().get();
+    public Optional<User> findById(Long id) {
+        return usersInMemory.stream().filter(u -> u.getId().equals(id)).findFirst();
     }
 
     @Override
-    public User findByUsername(String username) {
-        return null;
+    public Optional<User> findByUsername(String username) {
+        return usersInMemory.stream().filter(u -> u.getUsername().contentEquals(username)).findFirst();
     }
 }
