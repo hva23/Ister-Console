@@ -4,8 +4,15 @@ public class Location extends BaseEntity {
 
     private String name;
     private Double latitude;
-    private Double longtitude;
+    private Double longitude;
+    private Things thing;
 
+    public Things getThing() {
+        return thing;
+    }
+    public void setThing(Things thing) {
+        this.thing = thing;
+    }
     public String getName() {
         return name;
     }
@@ -18,10 +25,10 @@ public class Location extends BaseEntity {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
-    public Double getLongtitude() {
-        return longtitude;
+    public Double getLongitude() {
+        return longitude;
     }
-    public void setLongtitude(Double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }
