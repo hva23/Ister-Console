@@ -5,6 +5,7 @@ import com.ister.domain.Things;
 import com.ister.domain.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ThingsRepository {
     void create(Things thing);
@@ -18,9 +19,9 @@ public interface ThingsRepository {
 
     TelemetryData getThingRecord(Things thing);
 
-    Things findById(Long id);
+    Optional<Things> findById(Long id);
 
-    Things findBySerialNumber(String serialNumber);
+    Optional<Things> findBySerialNumber(String serialNumber);
 
     List<Things> findByUser(User user);
 

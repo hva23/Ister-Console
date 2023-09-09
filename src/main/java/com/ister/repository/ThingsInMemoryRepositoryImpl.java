@@ -6,6 +6,7 @@ import com.ister.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ThingsInMemoryRepositoryImpl implements ThingsRepository{
 
@@ -41,12 +42,12 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository{
     }
 
     @Override
-    public Things findById(Long id) {
+    public Optional<Things> findById(Long id) {
         return null;
     }
 
     @Override
-    public Things findBySerialNumber(String serialNumber) {
+    public Optional<Things> findBySerialNumber(String serialNumber) {
         return null;
     }
 
