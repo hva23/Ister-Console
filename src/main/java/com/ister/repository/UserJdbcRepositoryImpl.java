@@ -23,7 +23,7 @@ public class UserJdbcRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findBuUsername(String username) {
+    public User findByUsername(String username) {
         return null;
     }
 }
