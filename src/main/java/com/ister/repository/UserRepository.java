@@ -14,5 +14,5 @@ public interface UserRepository {
 
     User findById(Long id);
 
-    User findBuUsername(String username);
+    User findByUsername(String username);
 }
