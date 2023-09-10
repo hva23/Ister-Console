@@ -67,26 +67,24 @@ public class UserService {
     }
 
     public RequestStatus editProfile(User user) {
-        try {
-            userRepository.findById(user.getId());
-            userRepository.delete(user);
-            userRepository.create(user);
-        } catch (Exception ex) {
-            System.out.println("This user doesn't exists!");
+
+        Optional<User> usr = userRepository.findByUsername(user.getUsername());
+        if (usr.isPresent()) {
+            userRepository.update(usr.get());
+            return RequestStatus.Successful;
         }
-        return RequestStatus.Successful;
+        System.out.println("This user doesn't exists!");
+        return RequestStatus.Failed;
     }
 
     public RequestStatus delete(User user) {
-        try {
-            userRepository.findById(user.getId());
+        Optional<User> usr = userRepository.findById(user.getId());
+        if (usr.isPresent()) {
             userRepository.delete(user);
-            thingsRepository.delete(thingsRepository.findByUser(user));
+            //thingsRepository.delete(thingsRepository.findByUser(user));
             return RequestStatus.Successful;
-        } catch (Exception ex) {
-            System.out.println("This user doesn't exists or something went wrong!");
-            return RequestStatus.Failed;
         }
-
+        System.out.println("This user doesn't exists or something went wrong!");
+        return RequestStatus.Failed;
     }
 }
