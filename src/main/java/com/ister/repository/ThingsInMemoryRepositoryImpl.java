@@ -8,12 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ThingsInMemoryRepositoryImpl implements ThingsRepository{
+public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
 
     List<Things> thingsInMemory = new ArrayList<>();
+
     @Override
     public void create(Things thing) {
         thingsInMemory.add(thing);
+    }
+
+    @Override
+    public void update(Things thing) {
+        Optional<Things> dbThingOptional = findById(thing.getId());
+        if (dbThingOptional.isPresent()) {
+            thing = dbThingOptional.get();
+            //thing.se
+        }
     }
 
     @Override
@@ -22,7 +32,7 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository{
     }
 
     @Override
-    public void delete(List<Things> things){
+    public void delete(List<Things> things) {
 
     }
 
@@ -52,7 +62,7 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository{
     }
 
     @Override
-    public List<Things> findByUser(User user){
+    public List<Things> findByUser(User user) {
         return null;
     }
 }
