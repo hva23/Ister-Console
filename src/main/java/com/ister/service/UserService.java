@@ -17,7 +17,7 @@ public class UserService {
     }
 
     public RequestStatus signUp(User user) {
-        Optional<User> usr = userRepository.findById(user.getId());
+        Optional<User> usr = userRepository.findByUsername(user.getUsername());
         if (usr.isPresent()) {
             System.out.printf("A user exists with this ID : %d", user.getId());
             return RequestStatus.Failed;
