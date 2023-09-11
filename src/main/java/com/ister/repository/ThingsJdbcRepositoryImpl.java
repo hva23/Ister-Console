@@ -14,6 +14,10 @@ public class ThingsJdbcRepositoryImpl implements ThingsRepository{
     }
 
     @Override
+    public void update(Things thing) {
+
+    }
+    @Override
     public void delete(Things thing) {
 
     }
