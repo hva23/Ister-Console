@@ -2,7 +2,7 @@ package com.ister.domain;
 
 import java.util.Objects;
 
-public class User  extends BaseEntity{
+public class User  extends BaseEntity implements Cloneable{
     private String username;
     private String password;
     private String email;
@@ -43,5 +43,10 @@ public class User  extends BaseEntity{
     @Override
     public int hashCode() {
         return Objects.hash(username, password, email);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
