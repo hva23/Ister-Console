@@ -14,7 +14,7 @@ public class ThingsJdbcRepositoryImpl implements ThingsRepository{
     }
 
     @Override
-    public void update(Things thing) {
+    public boolean update(Things thing) {
 
     }
     @Override
