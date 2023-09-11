@@ -4,9 +4,7 @@ import com.ister.common.RequestStatus;
 import com.ister.common.UserStatus;
 import com.ister.domain.User;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class MenuService {
 
@@ -16,33 +14,38 @@ public class MenuService {
     private UserService userService = new UserService();
 
     public void menu() {
-
-
+        List<Object> userList;
+        while (true) {
+            userList = login();
+            if (!userList.contains(UserStatus.Null)) {
+                userOptions((Long)userList.get(1));
+            }
+        }
     }
 
-    private UserStatus login() {
+    private List<Object> login() {
         User user = new User();
+        List<Object> userList = new ArrayList<>();
 
         while (true) { //sign in and login loop
             System.out.println("""
                     Unknown user,
-                    Please press 1 to signup and 2 for login
-                    """);
+                    Please press 1 to signup and 2 for login""");
 
             inputResult = in.next();
 
             if (inputResult.contentEquals("1")) { //sign up
 
                 /* username */
-                System.out.println("Enter your username : ");
+                System.out.print("Enter your username : ");
                 user.setUsername(in.next());
 
                 /* password */
-                System.out.println("Enter your password : ");
+                System.out.print("Enter your password : ");
                 user.setPassword(in.next());
 
                 /* email */
-                System.out.println("Enter your email : ");
+                System.out.print("Enter your email : ");
                 user.setEmail(in.next());
 
                 /* created date and id assigning */
@@ -52,29 +55,33 @@ public class MenuService {
 
                 if (userService.signUp(user) == RequestStatus.Successful) {
                     System.out.println("your account successfully created");
-                    userService.getUserData(user);
-                    return UserStatus.SignedUp;
+                    System.out.println(userService.getUserData(user));
+                    userList.add(0, UserStatus.SignedUp);
+                    userList.add(1, user.getId());
+                    return userList;
                 }
-                user.setId(null);   //user didn't create
-                return UserStatus.Null;
+                userList.add(0, UserStatus.Null);
+                return userList;
 
 
             } else if (inputResult.contentEquals("2")) {  //login
 
                 /* username */
-                System.out.println("Enter your username : ");
+                System.out.print("Enter your username : ");
                 user.setUsername(in.next());
 
                 /* password */
-                System.out.println("Enter your password : ");
+                System.out.print("Enter your password : ");
                 user.setPassword(in.next());
 
                 if (userService.login(user) == RequestStatus.Successful) {
-                    System.out.println(userService.getUserData(user));
-                    return UserStatus.LoggedIn;
+                    System.out.println(userService.getUserData(user.getUsername()));
+                    userList.add(0, UserStatus.LoggedIn);
+                    userList.add(1, userService.getUser(user.getUsername()).getId());
+                    return userList;
                 }
-                user.setId(null);   //user didn't login
-                return UserStatus.Null;
+                userList.add(0, UserStatus.Null);
+                return userList;
 
             } else if (inputResult.contentEquals("exit")) {
                 System.out.println("Closing...");
@@ -85,12 +92,12 @@ public class MenuService {
         }
     }
 
-    private UserStatus userOptions() {
-        User user = new User();
+    private UserStatus userOptions(Long userId) {
+        User user = userService.getUser(userId);
 
         //user control loop
         userControl:
-        while (user.getId() != null) { //jump in to this loop if user is available
+        while (true) { //jump in to this loop if user is available
             System.out.printf("""
                     ************    username : %s    ************
                     Enter any option :
@@ -129,15 +136,15 @@ public class MenuService {
                 case "4" -> {                                   //edit current user profile
 
                     /* username */
-                    System.out.println("Enter your username : ");
+                    System.out.print("Enter your username : ");
                     user.setUsername(in.next());
 
                     /* password */
-                    System.out.println("Enter your password : ");
+                    System.out.print("Enter your password : ");
                     user.setPassword(in.next());
 
                     /* email */
-                    System.out.println("Enter your email : ");
+                    System.out.print("Enter your email : ");
                     user.setEmail(in.next());
 
                     if (userService.editProfile(user) == RequestStatus.Successful) {
@@ -161,6 +168,5 @@ public class MenuService {
             }
 
         }
-        return null;
     }
 }
