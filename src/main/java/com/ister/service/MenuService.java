@@ -13,7 +13,7 @@ public class MenuService {
     private String inputResult;
     private UserService userService = new UserService();
 
-    public void menu() {
+    public void menu() throws CloneNotSupportedException {
         List<Object> userList;
         while (true) {
             userList = login();
@@ -92,8 +92,8 @@ public class MenuService {
         }
     }
 
-    private UserStatus userOptions(Long userId) {
-        User user = userService.getUser(userId);
+    private UserStatus userOptions(Long userId) throws CloneNotSupportedException {
+        User user = (User) userService.getUser(userId).clone();
 
         //user control loop
         userControl:
