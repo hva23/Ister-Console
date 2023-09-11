@@ -31,6 +31,10 @@ public class UserService {
         Optional<User> usr = userRepository.findByUsername(user.getUsername());
         if (usr.isPresent()) {
             if (checkPassword(usr, user.getPassword())) return RequestStatus.Successful;
+            else {
+                System.out.println("Password is wrong");
+                return RequestStatus.Failed;
+            }
         }
         System.out.println("User not found!");
         return RequestStatus.Failed;
@@ -50,8 +54,25 @@ public class UserService {
                 """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate());
     }
 
-    public User getUser(Long id){
+    public String getUserData(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if(userOptional.isPresent())
+            return String.format("""
+                    user ID : %d
+                    username : %s
+                    email : %s
+                    created date : %s           
+                    """, userOptional.get().getId(), userOptional.get().getUsername(), userOptional.get().getEmail(), userOptional.get().getCreatedDate());
+        else return null;
+    }
+
+    public User getUser(Long id) {
         Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.orElse(null);
+    }
+
+    public User getUser(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.orElse(null);
     }
 
@@ -64,7 +85,7 @@ public class UserService {
 
     public RequestStatus editProfile(User user) {
 
-        if(userRepository.update(user))
+        if (userRepository.update(user))
             return RequestStatus.Successful;
         else {
             System.out.println("This user doesn't exists!");
