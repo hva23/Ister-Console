@@ -30,15 +30,7 @@ public class UserService {
     public RequestStatus login(User user) {
         Optional<User> usr = userRepository.findByUsername(user.getUsername());
         if (usr.isPresent()) {
-            if (checkPassword(usr, user.getPassword())) {
-                user = usr.get();
-                System.out.printf("""
-                        Welcome %s
-                        you logged in with this email : %s
-                        your ID : %d
-                        """, user.getUsername(), user.getEmail(), user.getId());
-                return RequestStatus.Successful;
-            }
+            if (checkPassword(usr, user.getPassword())) return RequestStatus.Successful;
         }
         System.out.println("User not found!");
         return RequestStatus.Failed;
@@ -49,14 +41,18 @@ public class UserService {
         return (user.getPassword().contentEquals(password));
     }
 
-    public void getUser(User user) {
-        System.out.printf("""
+    public String getUserData(User user) {
+        return String.format("""
                 user ID : %d
                 username : %s
                 email : %s
-                created date : %s
-                                
-                """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate().toString());
+                created date : %s           
+                """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate());
+    }
+
+    public User getUser(Long id){
+        Optional<User> userOptional = userRepository.findById(id);
+        return userOptional.orElse(null);
     }
 
     public RequestStatus forgotPassword(User user) {
@@ -68,13 +64,12 @@ public class UserService {
 
     public RequestStatus editProfile(User user) {
 
-        Optional<User> usr = userRepository.findByUsername(user.getUsername());
-        if (usr.isPresent()) {
-            userRepository.update(usr.get());
+        if(userRepository.update(user))
             return RequestStatus.Successful;
+        else {
+            System.out.println("This user doesn't exists!");
+            return RequestStatus.Failed;
         }
-        System.out.println("This user doesn't exists!");
-        return RequestStatus.Failed;
     }
 
     public RequestStatus delete(User user) {
