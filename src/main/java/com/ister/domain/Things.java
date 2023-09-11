@@ -11,6 +11,16 @@ public class Things extends BaseEntity {
     private Location location;
     private Map<String,Object> attributes;
 
+    private TelemetryData telemetryData;
+
+    public TelemetryData getTelemetryData() {
+        return telemetryData;
+    }
+
+    public void setTelemetryData(TelemetryData telemetryData) {
+        this.telemetryData = telemetryData;
+    }
+
     @Override
     public Long getId() {
         return id;
