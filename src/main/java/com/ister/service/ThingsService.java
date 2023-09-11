@@ -1,6 +1,7 @@
 package com.ister.service;
 
 import com.ister.common.RequestStatus;
+import com.ister.domain.Location;
 import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.domain.User;
@@ -41,18 +42,45 @@ public class ThingsService {
         return RequestStatus.Failed;
     }
 
-    public TelemetryData getData(Things thing) {
-        TelemetryData telemetryData = new TelemetryData();
-        /* get data from specified thing */
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("Humanity", 66);
-        data.put("Temperature", 23);
-        telemetryData.setData(data);
-        telemetryData.setThing(thing);
-        return telemetryData;
+    public Things getThing(String serialNumber) {
+        Optional<Things> thingsOptional = thingsRepository.findBySerialNumber(serialNumber);
+        return thingsOptional.orElse(null);
     }
 
-    public RequestStatus sendData(Things thing) {
+    public String getThingData(String serialNumber) {
+        Optional<Things> thingOptional = thingsRepository.findBySerialNumber(serialNumber);
+        if (thingOptional.isPresent()) {
+            Location location = thingOptional.get().getLocation();
+            return String.format("""
+                            Thing name : %s
+                            Thing ID : %d
+                            Thing serial number : %s
+                            Thing location (latitude, longitude) : %s(%.2f, %.2f)
+                            Thing owner (username, ID) : %s , %d
+                            """,
+                    thingOptional.get().getName(),
+                    thingOptional.get().getId(),
+                    thingOptional.get().getSerialNumber(),
+                    location.getName(),
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    thingOptional.get().getUser().getUsername(),
+                    thingOptional.get().getUser().getId());
+        }
+        return null;
+
+    }
+
+    public List<Things> getUserThing(User user) {
+        return thingsRepository.findByUser(user);
+    }
+
+    public TelemetryData getTelemetryData(Things thing) {
+        return thing.getTelemetryData();
+    }
+
+    public RequestStatus sendTelemetryData(TelemetryData telemetryData) {
+        telemetryData.getThing().setTelemetryData(telemetryData);
         return RequestStatus.Successful;
     }
 }
