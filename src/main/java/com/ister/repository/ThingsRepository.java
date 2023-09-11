@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ThingsRepository {
     void create(Things thing);
 
+    void update(Things thing);
     void delete(Things thing);
     void delete(List<Things> things);
 
