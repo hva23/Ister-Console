@@ -18,12 +18,21 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
     }
 
     @Override
-    public void update(Things thing) {
+    public boolean update(Things thing) {
         Optional<Things> dbThingOptional = findById(thing.getId());
-        if (dbThingOptional.isPresent()) {
-            thing = dbThingOptional.get();
-            //thing.se
+        if(dbThingOptional.isPresent()){
+            Things dbThing = dbThingOptional.get();
+
+            dbThing.setName(thing.getName());
+            dbThing.setSerialNumber(thing.getSerialNumber());
+            dbThing.setLocation(thing.getLocation());
+            dbThing.setAttributes(thing.getAttributes());
+
+            thingsInMemory.remove(thing);
+            thingsInMemory.add(dbThing);
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -33,7 +42,10 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
 
     @Override
     public void delete(List<Things> things) {
-
+        /* Delete every thing in list from repository */
+        for (Things thing : things) {
+            thingsInMemory.remove(thing);
+        }
     }
 
     @Override
@@ -53,16 +65,16 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
 
     @Override
     public Optional<Things> findById(Long id) {
-        return null;
+        return thingsInMemory.stream().filter(t -> t.getId().equals(id)).findFirst();
     }
 
     @Override
     public Optional<Things> findBySerialNumber(String serialNumber) {
-        return null;
+        return thingsInMemory.stream().filter(things -> things.getSerialNumber().contentEquals(serialNumber)).findFirst();
     }
 
     @Override
     public List<Things> findByUser(User user) {
-        return null;
+        return thingsInMemory.stream().filter(things -> things.getUser().equals(user)).toList();
     }
 }
