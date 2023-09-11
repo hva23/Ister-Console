@@ -97,7 +97,6 @@ public class UserService {
         Optional<User> usr = userRepository.findById(user.getId());
         if (usr.isPresent()) {
             userRepository.delete(user);
-            //thingsRepository.delete(thingsRepository.findByUser(user));
             return RequestStatus.Successful;
         }
         System.out.println("This user doesn't exists or something went wrong!");
