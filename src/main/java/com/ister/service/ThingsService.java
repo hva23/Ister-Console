@@ -7,7 +7,7 @@ import com.ister.domain.User;
 import com.ister.repository.ThingsInMemoryRepositoryImpl;
 import com.ister.repository.ThingsRepository;
 
-import java.util.Optional;
+import java.util.*;
 
 public class ThingsService {
     ThingsRepository thingsRepository = new ThingsInMemoryRepositoryImpl();
@@ -23,29 +23,33 @@ public class ThingsService {
     }
 
     public RequestStatus editThing(Things thing) {
-        try {
-            thingsRepository.findById(thing.getId());
-            thingsRepository.delete(thing);
-            thingsRepository.create(thing);
-        } catch (Exception ex) {
-            System.out.println("This user doesn't exists!");
-        }
-        return RequestStatus.Successful;
-    }
-
-    public RequestStatus delete(Things thing) {
-        try {
-            thingsRepository.findById(thing.getId());
-            thingsRepository.delete(thing);
+        if (thingsRepository.update(thing))
             return RequestStatus.Successful;
-        } catch (Exception ex) {
-            System.out.println("This thing doesn't exists or something went wrong!");
+        else {
+            System.out.println("This thing doesn't exists!");
             return RequestStatus.Failed;
         }
     }
 
+    public RequestStatus delete(Things thing) {
+        Optional<Things> dbThingOptional = thingsRepository.findById(thing.getId());
+        if (dbThingOptional.isPresent()) {
+            thingsRepository.delete(thing);
+            return RequestStatus.Successful;
+        }
+        System.out.println("This thing doesn't exists or something went wrong!");
+        return RequestStatus.Failed;
+    }
+
     public TelemetryData getData(Things thing) {
-        return null;
+        TelemetryData telemetryData = new TelemetryData();
+        /* get data from specified thing */
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("Humanity", 66);
+        data.put("Temperature", 23);
+        telemetryData.setData(data);
+        telemetryData.setThing(thing);
+        return telemetryData;
     }
 
     public RequestStatus sendData(Things thing) {
