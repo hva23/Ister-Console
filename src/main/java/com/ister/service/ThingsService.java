@@ -50,13 +50,26 @@ public class ThingsService {
     public String getThingData(String serialNumber) {
         Optional<Things> thingOptional = thingsRepository.findBySerialNumber(serialNumber);
         if (thingOptional.isPresent()) {
+
             Location location = thingOptional.get().getLocation();
+            StringBuilder telemetryData = new StringBuilder();
+            Map<String, Object> telemetryDataSet;
+            if(thingOptional.get().getTelemetryData() != null) {
+                telemetryDataSet = thingOptional.get().getTelemetryData().getData();
+
+                for (Map.Entry<String, Object> data : telemetryDataSet.entrySet()) {
+                    telemetryData.append(data.getKey());
+                    telemetryData.append(" -> ");
+                    telemetryData.append(data.getValue());
+                }
+            }
             return String.format("""
                             Thing name : %s
                             Thing ID : %d
                             Thing serial number : %s
                             Thing location (latitude, longitude) : %s(%.2f, %.2f)
                             Thing owner (username, ID) : %s , %d
+                            Telemetry data : %s
                             """,
                     thingOptional.get().getName(),
                     thingOptional.get().getId(),
@@ -65,7 +78,8 @@ public class ThingsService {
                     location.getLatitude(),
                     location.getLongitude(),
                     thingOptional.get().getUser().getUsername(),
-                    thingOptional.get().getUser().getId());
+                    thingOptional.get().getUser().getId(),
+                    telemetryData);
         }
         return null;
 
@@ -81,6 +95,7 @@ public class ThingsService {
 
     public RequestStatus sendTelemetryData(TelemetryData telemetryData) {
         telemetryData.getThing().setTelemetryData(telemetryData);
+        thingsRepository.update(telemetryData.getThing());
         return RequestStatus.Successful;
     }
 }
