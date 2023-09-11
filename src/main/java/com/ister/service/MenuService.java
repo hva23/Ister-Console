@@ -93,13 +93,23 @@ public class MenuService {
 
                 TelemetryData telemetryData = new TelemetryData();
                 Map<String, Object> data = new HashMap<>();
+                Things thing = new Things();
+
 
                 System.out.print("Enter thing serial number : ");
-                telemetryData.setThing(thingsService.getThing(in.next()));
+                inputResult = in.next();
+                try {
+                    thing = (Things) thingsService.getThing(inputResult).clone();
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+
+                telemetryData.setThing(thing);
                 System.out.print("Enter data (key, value) : ");
                 data.put(in.next(), in.next());
 
                 telemetryData.setData(data);
+                thingsService.sendTelemetryData(telemetryData);
 
             } else if (inputResult.contentEquals("exit")) {
                 System.out.println("Closing...");
@@ -204,25 +214,29 @@ public class MenuService {
                     if (thingsService.addThing(thing) == RequestStatus.Successful) {
                         System.out.println("thing successfully added");
                         System.out.println(thingsService.getThingData(thing.getSerialNumber()));
+                    } else {
+                        System.out.println("Thing didn't add");
+                        return UserStatus.Failed;
                     }
-                    System.out.println("Thing did't added");
-                    return UserStatus.Failed;
                 }
                 case "4" -> {                                   //show things
                     List<Things> things = thingsService.getUserThing(user);
+                    for(Things thing : things)
+                        System.out.println(thingsService.getThingData(thing.getSerialNumber()));
+                    /*
                     Location location;
                     for (int i = 0; i < things.size(); i++) {
                         location = things.get(i).getLocation();
                         System.out.printf("""
-                            
-                            no %d
-                            Thing name : %s
-                            Thing ID : %d
-                            Thing serial number : %s
-                            Thing location (latitude, longitude) : %s(%.2f, %.2f)
-                            Thing owner (username, ID) : %s , %d
-                            
-                            """,
+                                                                    
+                                        no %d
+                                        Thing name : %s
+                                        Thing ID : %d
+                                        Thing serial number : %s
+                                        Thing location (latitude, longitude) : %s(%.2f, %.2f)
+                                        Thing owner (username, ID) : %s , %d
+                                                                    
+                                        """,
                                 i,
                                 things.get(i).getName(),
                                 things.get(i).getId(),
@@ -233,6 +247,8 @@ public class MenuService {
                                 things.get(i).getUser().getUsername(),
                                 things.get(i).getUser().getId());
                     }
+
+                     */
                 }
                 case "5" -> {                                   //edit current user profile
 
