@@ -5,7 +5,6 @@ public enum UserStatus {
     LoggedIn,
     Deleted,
     Failed,
-    ThingsAdded,
     Edited,
     Null;
 }
