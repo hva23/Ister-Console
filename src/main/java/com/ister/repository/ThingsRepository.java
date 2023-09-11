@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ThingsRepository {
     void create(Things thing);
 
-    void update(Things thing);
+    boolean update(Things thing);
 
     void delete(Things thing);
 
