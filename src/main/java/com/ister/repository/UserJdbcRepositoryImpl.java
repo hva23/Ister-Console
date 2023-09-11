@@ -15,6 +15,9 @@ public class UserJdbcRepositoryImpl implements UserRepository {
     public void delete(User user) {
     }
 
+    public boolean update(User user){
+        return true;
+    }
     public List<User> getAll() {
         return new ArrayList<>();
     }
