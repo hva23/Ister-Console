@@ -19,7 +19,7 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
 
     @Override
     public boolean update(Things thing) {
-        Optional<Things> dbThingOptional = findById(thing.getId());
+        Optional<Things> dbThingOptional = findBySerialNumber(thing.getSerialNumber());
         if(dbThingOptional.isPresent()){
             Things dbThing = dbThingOptional.get();
 
@@ -27,7 +27,7 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
             dbThing.setSerialNumber(thing.getSerialNumber());
             dbThing.setLocation(thing.getLocation());
             dbThing.setAttributes(thing.getAttributes());
-
+            dbThing.setTelemetryData(thing.getTelemetryData());
             thingsInMemory.remove(thing);
             thingsInMemory.add(dbThing);
             return true;
