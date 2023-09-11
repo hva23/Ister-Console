@@ -4,11 +4,22 @@ import java.util.Map;
 
 public class Things extends BaseEntity {
 
+    private Long id;
     private String name;
     private String serialNumber;
     private User user;
     private Location location;
     private Map<String,Object> attributes;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
