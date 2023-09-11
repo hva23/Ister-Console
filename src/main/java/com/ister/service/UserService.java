@@ -56,14 +56,13 @@ public class UserService {
 
     public String getUserData(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        if(userOptional.isPresent())
-            return String.format("""
-                    user ID : %d
-                    username : %s
-                    email : %s
-                    created date : %s           
-                    """, userOptional.get().getId(), userOptional.get().getUsername(), userOptional.get().getEmail(), userOptional.get().getCreatedDate());
-        else return null;
+        return userOptional.map(user -> String.format("""
+                user ID : %d
+                username : %s
+                email : %s
+                created date : %s           
+                """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate())).orElse(null);
+
     }
 
     public User getUser(Long id) {
