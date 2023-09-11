@@ -70,4 +70,9 @@ public class Things extends BaseEntity {
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
