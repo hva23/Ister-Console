@@ -2,7 +2,7 @@ package com.ister.domain;
 
 import java.util.Map;
 
-public class Things extends BaseEntity {
+public class Things extends BaseEntity implements Cloneable{
 
     private Long id;
     private String name;

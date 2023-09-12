@@ -99,7 +99,7 @@ public class MenuService {
                 System.out.print("Enter thing serial number : ");
                 inputResult = in.next();
                 try {
-                    thing = (Things) thingsService.getThing(inputResult).clone(); Bug :(
+                    thing = (Things) thingsService.getThing(inputResult).clone();
                 } catch (Exception ex) {
                     System.out.println(ex);
                 }
