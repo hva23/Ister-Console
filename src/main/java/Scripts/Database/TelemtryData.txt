@@ -1,0 +1,8 @@
+CREATE TABLE `telemetrydata` (
+  `DateKey` varchar(50) DEFAULT NULL,
+  `ValueKey` varchar(255) DEFAULT NULL,
+  `RecievedDate` datetime NOT NULL,
+  `ThingID` int NOT NULL,
+  PRIMARY KEY (`ThingID`),
+  CONSTRAINT `telemetrydata_ibfk_1` FOREIGN KEY (`ThingID`) REFERENCES `things` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

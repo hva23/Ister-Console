@@ -1,0 +1,18 @@
+CREATE TABLE `things` (
+  `ID` int NOT NULL,
+  `Name` varchar(100) NOT NULL,
+  `SerialNumber` varchar(50) NOT NULL,
+  `UserID` int NOT NULL,
+  `LocationID` int NOT NULL,
+  `TelemetryData` int NOT NULL,
+  `CreatedDate` datetime NOT NULL,
+  `LastModifiedDate` datetime DEFAULT NULL,
+  `AttributesKey` varchar(50) DEFAULT NULL,
+  `AttributesValue` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UniqueKeys` (`SerialNumber`),
+  KEY `UserID` (`UserID`),
+  KEY `LocationID` (`LocationID`),
+  CONSTRAINT `things_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`),
+  CONSTRAINT `things_ibfk_2` FOREIGN KEY (`LocationID`) REFERENCES `location` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
