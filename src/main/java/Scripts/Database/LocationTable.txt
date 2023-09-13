@@ -1,7 +1,7 @@
 CREATE TABLE `location` (
   `ID` int NOT NULL,
   `ThingID` int DEFAULT NULL,
-  `Name` int DEFAULT NULL,
+  `Name` varchar(100) DEFAULT NULL,
   `Latitude` double DEFAULT NULL,
   `Longitude` double DEFAULT NULL,
   PRIMARY KEY (`ID`),
