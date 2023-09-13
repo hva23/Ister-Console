@@ -1,0 +1,15 @@
+CREATE TABLE `user_products` (
+  `ID` int NOT NULL,
+  `NAME` varchar(50) NOT NULL,
+  `SERIAL_NUMBER` varchar(50) NOT NULL,
+  `USER_ID` varchar(50) NOT NULL,
+  `PRODUCT_ID` int NOT NULL,
+  `LOCATION_ID` int NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `USER_ID` (`USER_ID`),
+  KEY `PRODUCT_ID` (`PRODUCT_ID`),
+  KEY `LOCATION_ID` (`LOCATION_ID`),
+  CONSTRAINT `user_products_ibfk_1` FOREIGN KEY (`USER_ID`) REFERENCES `users` (`UUID`),
+  CONSTRAINT `user_products_ibfk_2` FOREIGN KEY (`PRODUCT_ID`) REFERENCES `products` (`ID`),
+  CONSTRAINT `user_products_ibfk_3` FOREIGN KEY (`LOCATION_ID`) REFERENCES `location` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

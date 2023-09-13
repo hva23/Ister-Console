@@ -1,10 +1,8 @@
 CREATE TABLE `location` (
   `ID` int NOT NULL,
-  `ThingID` int DEFAULT NULL,
-  `Name` varchar(100) DEFAULT NULL,
-  `Latitude` double DEFAULT NULL,
-  `Longitude` double DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `ThingID` (`ThingID`),
-  CONSTRAINT `location_ibfk_1` FOREIGN KEY (`ThingID`) REFERENCES `things` (`ID`)
+  `PROVINCE` varchar(50) NOT NULL,
+  `CITY` varchar(50) NOT NULL,
+  `LATITUDE` double NOT NULL,
+  `LONGITUDE` double NOT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
