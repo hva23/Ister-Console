@@ -12,8 +12,9 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
     private List<User> usersInMemory = new ArrayList<>();
 
     @Override
-    public void create(User user) {
+    public boolean create(User user) {
         usersInMemory.add(user);
+        return true;
     }
 
     @Override
@@ -32,8 +33,9 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(User user) {
+    public boolean delete(User user) {
         usersInMemory.remove(user);
+        return true;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(String id) {
         return usersInMemory.stream().filter(u -> u.getId().equals(id)).findFirst();
     }
 
