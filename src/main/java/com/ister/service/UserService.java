@@ -12,8 +12,10 @@ public class UserService {
     private ThingsRepository thingsRepository;
 
     public UserService() {
-        this.userRepository = new UserInMemoryRepositoryImpl();
-        this.thingsRepository = new ThingsInMemoryRepositoryImpl();
+        //this.userRepository = new UserInMemoryRepositoryImpl();
+        //this.thingsRepository = new ThingsInMemoryRepositoryImpl();
+        this.userRepository = new UserJdbcRepositoryImpl();
+        this.thingsRepository = new ThingsJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
 
     public RequestStatus signUp(User user) {
@@ -47,30 +49,30 @@ public class UserService {
 
     public String getUserData(User user) {
         return String.format("""
-                user ID : %d
+                user ID : %s
                 username : %s
                 email : %s
-                created date : %s           
+                created date : %s
                 """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate());
     }
 
     public String getUserData(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.map(user -> String.format("""
-                user ID : %d
+                user ID : %s
                 username : %s
                 email : %s
-                created date : %s           
+                created date : %s
                 """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate())).orElse(null);
 
     }
 
-    public User getUser(Long id) {
+    public User getUser(String id) {
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.orElse(null);
     }
 
-    public User getUser(String username) {
+    public User getUserByUsername(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.orElse(null);
     }
