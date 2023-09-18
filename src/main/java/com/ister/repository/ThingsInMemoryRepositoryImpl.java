@@ -13,8 +13,9 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
     List<Things> thingsInMemory = new ArrayList<>();
 
     @Override
-    public void create(Things thing) {
+    public boolean create(Things thing) {
         thingsInMemory.add(thing);
+        return true;
     }
 
     @Override
@@ -36,8 +37,9 @@ public class ThingsInMemoryRepositoryImpl implements ThingsRepository {
     }
 
     @Override
-    public void delete(Things thing) {
+    public boolean delete(Things thing) {
         thingsInMemory.remove(thing);
+        return true;
     }
 
     @Override
