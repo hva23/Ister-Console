@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ThingsRepository {
-    void create(Things thing);
+    boolean create(Things thing);
 
     boolean update(Things thing);
 
-    void delete(Things thing);
+    boolean delete(Things thing);
 
     void delete(List<Things> things);
 

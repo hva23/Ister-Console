@@ -1,21 +1,13 @@
 package com.ister.repository;
 
+import com.ister.domain.Location;
 import com.ister.domain.User;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
+public interface UserRepository extends BaseRespository<User, String> {
 
-    void create(User user);
-
-    void delete(User user);
-
-    boolean update(User user);
-
-    List<User> getAll();
-
-    Optional<User> findById(Long id);
 
     Optional<User> findByUsername(String username);
 
