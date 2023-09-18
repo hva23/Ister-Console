@@ -2,17 +2,17 @@ package com.ister.domain;
 
 import java.util.Date;
 
-public class BaseEntity {
+public class BaseEntity<PK > {
 
-    private Long id;
+    private PK id;
     private Date createdDate;
     private Date lastModifiedDate;
 
-    public Long getId() {
+    public PK getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(PK id) {
         this.id = id;
     }
 
