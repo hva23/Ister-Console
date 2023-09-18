@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserInMemoryRepositoryImpl implements UserRepository {
+public class UserInMemoryRepositoryImpl implements BaseRespository<User, String> {
 
 
     private List<User> usersInMemory = new ArrayList<>();
@@ -48,7 +48,6 @@ public class UserInMemoryRepositoryImpl implements UserRepository {
         return usersInMemory.stream().filter(u -> u.getId().equals(id)).findFirst();
     }
 
-    @Override
     public Optional<User> findByUsername(String username) {
         return usersInMemory.stream().filter(u -> u.getUsername().contentEquals(username)).findFirst();
     }

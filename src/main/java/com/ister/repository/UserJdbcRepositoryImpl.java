@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserJdbcRepositoryImpl implements UserRepository {
+public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
 
 
-    public void create(User user) {
+    public boolean create(User user) {
+        return true;
     }
 
-    public void delete(User user) {
+    public boolean delete(User user) {
+        return true;
     }
 
     public boolean update(User user){
@@ -21,13 +23,14 @@ public class UserJdbcRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         return new ArrayList<>();
     }
-
-    public Optional<User> findById(Long id) {
-        return null;
-    }
-
     @Override
-    public Optional<User> findByUsername(String username) {
-        return null;
+    public Optional<User> findById(String id) {
+        return Optional.empty();
     }
+
+    public Optional<User> findByUsername(String username) {
+        return Optional.empty();
+    }
+
+
 }
