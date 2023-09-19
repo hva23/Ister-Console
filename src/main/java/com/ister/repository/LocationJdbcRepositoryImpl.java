@@ -4,10 +4,7 @@ import com.ister.domain.Location;
 import com.ister.service.QueryBuilder;
 import com.mysql.cj.jdbc.ConnectionImpl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Long> {
@@ -105,8 +102,10 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
             columnAndValues.put("LONGITUDE", location.getLongitude());
 
             conditions.put("ID", location.getId());
+
             query = queryBuilder.update(TABLE_NAME, columnAndValues, conditions);
-            return true;
+
+            return statement.executeUpdate(query) > 0;
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
@@ -115,16 +114,67 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
 
     @Override
     public List<Location> getAll() {
-        return null;
+        try {
+            Location location;
+            List<Location> locationList = new ArrayList<>();
+            Object[] obj;
+
+            obj = read(TABLE_NAME, null, null);
+
+            do {
+                location = setLocationFields((ResultSet) obj[0]);
+
+                locationList.add(location);
+            }
+            while (((ResultSet) obj[0]).next());
+
+            ((ResultSet) obj[0]).close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return locationList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public Optional<Location> findById(Long id) {
-        Location location;
-        Map<String, String> condition = new HashMap<>();
+        /*
+            obj[0] -> ResultSet
+            obj[1] -> Connection
+            obj[2] -> Statement
+         */
+        try {
+            Location location;
+            Map<String, Object> conditions = new HashMap<>();
 
-        return Optional.empty();
+            conditions.put("ID", id);
+
+            Object[] obj = read("LOCATION", null, conditions);
+
+            location = setLocationFields((ResultSet) obj[0]);
+
+            ((ResultSet) obj[0]).close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return Optional.of(location);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
+    private Location setLocationFields(ResultSet resultSet) throws SQLException {
+        Location location = new Location();
+        location.setId(resultSet.getLong("ID"));
+        location.setProvince(resultSet.getString("PROVINCE"));
+        location.setCity(resultSet.getString("CITY"));
+        location.setLatitude(resultSet.getDouble("LATITUDE"));
+        location.setLongitude(resultSet.getDouble("LONGITUDE"));
 
+        return location;
+    }
 }
