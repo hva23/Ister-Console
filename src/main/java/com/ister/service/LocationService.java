@@ -25,7 +25,6 @@ public class LocationService {
                 System.out.println("Something went wrong!");
                 return RequestStatus.Failed;
             }
-
         }
     }
 
