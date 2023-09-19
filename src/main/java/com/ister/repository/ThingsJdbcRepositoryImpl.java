@@ -1,22 +1,23 @@
 package com.ister.repository;
 
+import com.ister.domain.Location;
 import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.domain.User;
+import com.ister.service.QueryBuilder;
+import com.ister.service.ThingsService;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Optional;
+import java.sql.*;
+import java.util.*;
 
 public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
     private final String rawUrl;
     private final String username;
     private final String password;
+    private final String TABLE_NAME = "USER_PRODUCTS";
 
     public ThingsJdbcRepositoryImpl(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
@@ -27,21 +28,47 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
     @Override
     public boolean create(Things thing) {
         try {
-            Connection connection = DriverManager.getConnection(rawUrl, username, password);
-            Statement statement = connection.createStatement();  //insert into USER_PRODUCTS table
+            QueryBuilder queryBuilder = new QueryBuilder();
+            ResultSet resultSet;
+            Statement statement;
+            Object[] values;
+            String query;
+            long lastUserProductsId = 0;
+            long productId = 0;
+            boolean result;
 
-            long lastUserProductsId;
-            long productId;
+            //Read last user product ID
+            Object[] obj = read(TABLE_NAME, new String[]{"ID"}, null);
 
-            lastUserProductsId = read("USER_PRODUCTS", new String[]{"ID"}).getLong("ID");
+            resultSet = (ResultSet) obj[0];
+            statement = (Statement) obj[2];
 
+            while (resultSet.next()) {
+                if (resultSet.getLong("ID") > lastUserProductsId)
+                    lastUserProductsId = resultSet.getLong("ID");
+            }//End
+
+            //Because we just have 2 product
             productId = thing.getSerialNumber().substring(0, 3).contentEquals("100") ? 1 : 2;
 
-            statement.executeUpdate(String.format("insert into USER_PRODUCTS " +
-                            "values(%d, \"%s\", \"%s\", \"%s\", %d, %d)",
-                    lastUserProductsId + 1, thing.getName(), thing.getSerialNumber(),
-                    thing.getUser().getId(), productId, thing.getLocation().getId()));
-            return true;
+            values = new Object[]{
+                    lastUserProductsId + 1,
+                    thing.getName(),
+                    thing.getSerialNumber(),
+                    thing.getUser().getId(),
+                    productId,
+                    thing.getLocation().getId()
+            };
+
+            query = queryBuilder.create(TABLE_NAME, values);
+
+            result = statement.executeUpdate(query) > 0;
+
+            resultSet.close();
+            statement.close();
+            ((Connection) obj[1]).close();
+
+            return result;
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -51,41 +78,52 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
     @Override
     public boolean update(Things thing) {
-        return false;
+        try (Connection con = DriverManager.getConnection(rawUrl, username, password);
+             Statement statement = con.createStatement();) {
+
+            QueryBuilder queryBuilder = new QueryBuilder();
+            Map<String, Object> columnAndValues = new HashMap<>();
+            Map<String, Object> conditions = new HashMap<>();
+            String query;
+            int productId;
+
+            //Because we just have 2 product
+            productId = thing.getSerialNumber().substring(0, 3).contentEquals("100") ? 1 : 2;
+
+            columnAndValues.put("NAME", thing.getName());
+            columnAndValues.put("SERIAL_NUMBER", thing.getSerialNumber());
+            columnAndValues.put("USER_ID", thing.getUser().getId());
+            columnAndValues.put("PRODUCT_ID", productId);
+            columnAndValues.put("LOCATION_ID", thing.getLocation().getId());
+
+            conditions.put("ID", thing.getId());
+
+            query = queryBuilder.update(TABLE_NAME, columnAndValues, conditions);
+
+            return statement.executeUpdate(query) > 0;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean delete(Things thing) {
-        return true;
-    }
+        try (Connection con = DriverManager.getConnection(rawUrl, username, password);
+             Statement statement = con.createStatement();) {
 
-    public void delete(List<Things> things) {
+            QueryBuilder queryBuilder = new QueryBuilder();
+            Map<String, Object> condition = new HashMap<>();
+            String query;
 
-    }
+            condition.put("ID", thing.getId().toString());
 
-    private ResultSet read(String tableName, @Nullable String[] columns) {
-        try {
-            Connection con = DriverManager.getConnection(rawUrl, username, password);
-            Statement statement = con.createStatement();
-            ResultSet resultSet;
-            StringBuilder stringBuilder = new StringBuilder();
+            query = queryBuilder.delete(TABLE_NAME, condition);
 
-            if (columns.length > 0) {
-                for (int i = 0; i < columns.length; i++) {
-                    stringBuilder.append(columns[i]);
-                    if (i < columns.length - 1) stringBuilder.append(", ");
-                }
-            } else stringBuilder.append("*");
-
-            resultSet = statement.executeQuery(String.format("SELECT %s FROM %s", stringBuilder, tableName));
-
-            if (resultSet.next())
-                return resultSet;
-
-            return null;
+            return statement.executeUpdate(query) > 0;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -96,15 +134,64 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
     @Override
     public Optional<Things> findById(Long id) {
-        return null;
+        try {
+            ResultSet resultSet;
+            Things thing;
+            Map<String, Object> condition = new HashMap<>();
+
+            condition.put("ID", id);
+            Object[] obj = read(TABLE_NAME, null, condition);
+
+            resultSet = (ResultSet) obj[0];
+
+            thing = setThingFields(resultSet);
+
+            resultSet.close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return Optional.of(thing);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
+
     public Optional<Things> findBySerialNumber(String serialNumber) {
-        return null;
+        try {
+            ResultSet resultSet;
+            Things thing;
+            Map<String, Object> condition = new HashMap<>();
+
+            condition.put("SERIAL_NUMBER", serialNumber);
+            Object[] obj = read(TABLE_NAME, null, condition);
+
+            resultSet = (ResultSet) obj[0];
+
+            thing = setThingFields(resultSet);
+
+            resultSet.close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return Optional.of(thing);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Optional.empty();
+        }
     }
 
 
     public List<Things> findByUser(User user) {
         return null;
+    }
+
+
+    private Things setThingFields(ResultSet resultSet) throws SQLException {
+        Things thing = new Things();
+        thing.setId(resultSet.getLong("ID"));
+        thing.setName(resultSet.getString("NAME"));
+        thing.setSerialNumber(resultSet.getString("SERIAL_NUMBER"));
     }
 }
