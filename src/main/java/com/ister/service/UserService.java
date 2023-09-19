@@ -80,20 +80,20 @@ public class UserService {
 
     public String getUserData(User user) {
         return String.format("""
-                user ID : %s
-                username : %s
-                email : %s
-                created date : %s
+                User ID : %s
+                Username : %s
+                Email : %s
+                Created date : %s
                 """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate());
     }
 
     public String getUserData(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         return userOptional.map(user -> String.format("""
-                user ID : %s
-                username : %s
-                email : %s
-                created date : %s
+                User ID : %s
+                Username : %s
+                Email : %s
+                Created date : %s
                 """, user.getId(), user.getUsername(), user.getEmail(), user.getCreatedDate())).orElse(null);
 
     }
