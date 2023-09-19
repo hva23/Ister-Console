@@ -24,7 +24,7 @@ public interface BaseRespository<T, PK> {
 
     Optional<T> findById(PK id);
 
-    default Object[] read(String tableName, String[] columns, Map<String, String> conditions) {
+    default Object[] read(String tableName, String[] columns, Map<String, Object> conditions) {
         String url = "jdbc:mysql://localhost:8080/Ister";
         String username = "root";
         String password = "v@h@bI2442";
