@@ -1,26 +1,23 @@
 package com.ister.repository;
 
 import com.ister.domain.Location;
-import com.ister.domain.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.ister.service.QueryBuilder;
+import com.mysql.cj.jdbc.ConnectionImpl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class LocationJdbcRepository implements BaseRespository<Location, Long> {
+public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Long> {
     final private String rawUrl;
     final private String username;
     final private String password;
+    final private String TABLE_NAME = "LOCATION";
 
 
-    public LocationJdbcRepository(String rawUrl, String username, String password) {
+    public LocationJdbcRepositoryImpl(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
         this.username = username;
         this.password = password;
@@ -29,27 +26,33 @@ public class LocationJdbcRepository implements BaseRespository<Location, Long> {
     @Override
     public boolean create(Location location) {
         try {
+            QueryBuilder queryBuilder = new QueryBuilder();
+            Object[] values;
             long lastLocationId = 0;
             Statement statement;
             ResultSet resultSet;
             boolean result;
             String query;
 
-            Object[] obj = read("LOCATION", new String[] {"ID"}, null);
+            Object[] obj = read("LOCATION", new String[]{"ID"}, null);
 
             resultSet = (ResultSet) obj[0];
             statement = (Statement) obj[2];
 
             while (resultSet.next()) {
-                lastLocationId = resultSet.getLong("ID");
+                if (resultSet.getLong("ID") > lastLocationId)
+                    lastLocationId = resultSet.getLong("ID");
             }
 
-            query = String.format("INSERT INTO LOCATION VALUES(%d, \"%s\", \"%s\", %.4f, %.4f)",
+            values = new Object[]{
                     lastLocationId + 1,
                     location.getProvince(),
                     location.getCity(),
                     location.getLatitude(),
-                    location.getLongitude());
+                    location.getLongitude()
+            };
+
+            query = queryBuilder.create("LOCATION", values);
 
             result = statement.executeUpdate(query) > 0;
 
@@ -68,12 +71,46 @@ public class LocationJdbcRepository implements BaseRespository<Location, Long> {
 
     @Override
     public boolean delete(Location location) {
-        return false;
+        try (Connection con = DriverManager.getConnection(rawUrl, username, password);
+             Statement statement = con.createStatement();) {
+
+            QueryBuilder queryBuilder = new QueryBuilder();
+            Map<String, Object> condition = new HashMap<>();
+            String query;
+
+            condition.put("ID", location.getId().toString());
+
+            query = queryBuilder.delete("Location", condition);
+
+            return statement.executeUpdate(query) > 0;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean update(Location location) {
-        return false;
+        try (Connection con = DriverManager.getConnection(rawUrl, username, password);
+             Statement statement = con.createStatement();) {
+
+            QueryBuilder queryBuilder = new QueryBuilder();
+            Map<String, Object> columnAndValues = new HashMap<>();
+            Map<String, Object> conditions = new HashMap<>();
+            String query;
+
+            columnAndValues.put("PROVINCE", location.getProvince());
+            columnAndValues.put("CITY", location.getCity());
+            columnAndValues.put("LATITUDE", location.getLatitude());
+            columnAndValues.put("LONGITUDE", location.getLongitude());
+
+            conditions.put("ID", location.getId());
+            query = queryBuilder.update(TABLE_NAME, columnAndValues, conditions);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -88,7 +125,6 @@ public class LocationJdbcRepository implements BaseRespository<Location, Long> {
 
         return Optional.empty();
     }
-
 
 
 }
