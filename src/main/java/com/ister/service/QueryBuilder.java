@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class QueryBuilder {
 
-    private String mapToKeyValue(@NotNull Map<String, String> data, @NotNull String seperator) {
+    private String mapToKeyValue(@NotNull Map<String, Object> data, @NotNull String seperator) {
         StringBuilder stringBuilder = new StringBuilder();
         //making column1 = value1 and so on with string builder
         for (Map.Entry entry : data.entrySet()) {
@@ -27,24 +27,24 @@ public class QueryBuilder {
         StringBuilder valuesStringBuilder = new StringBuilder();
         String query;
 
-        //Constructing values like value1, value2, value3, ... and so on.
+        //Constructing values like "value1", "value2", "value3", ... and so on.
         for (int i = 0; i < values.length; i++) {
             if (values[i] != null) valuesStringBuilder.append(String.format("\"%s\"", values[i]));
             else valuesStringBuilder.append(values[i]);
             if (i < values.length - 1) valuesStringBuilder.append(", ");
         }
 
-        query = String.format("INSERT INTO %S values(%s)", tableName, valuesStringBuilder);
+        query = String.format("INSERT INTO %S VALUES(%s)", tableName, valuesStringBuilder);
         return query;
     }
 
-    public String read(@NotNull String tableName, @Nullable String[] columns, @Nullable Map<String, String> conditions) {
+    public String read(@NotNull String tableName, @Nullable String[] columns, @Nullable Map<String, Object> conditions) {
         StringBuilder stringBuilder = new StringBuilder();
         String conditionSequence;
         String query;
 
         //Constructing columns like column1, column2, column3, ... OR *.
-        if (columns.length > 0) {
+        if (columns != null && columns.length > 0) {
             for (String column : columns) {
                 stringBuilder.append(column);
                 stringBuilder.append(", ");
@@ -62,7 +62,7 @@ public class QueryBuilder {
         return query;
     }
 
-    public String update(@NotNull String tableName, @NotNull Map<String, String> columnsAndValues, @Nullable Map<String, String> conditions) {
+    public String update(@NotNull String tableName, @NotNull Map<String, Object> columnsAndValues, @Nullable Map<String, Object> conditions) {
         String columnsAndValuesSequence;
         String conditionsSequence;
         String query;
@@ -80,7 +80,7 @@ public class QueryBuilder {
         return query;
     }
 
-    public String delete(@NotNull String tableName, @Nullable Map<String, String> conditions) {
+    public String delete(@NotNull String tableName, @Nullable Map<String, Object> conditions) {
         String query;
         String conditionsSequence;
 
