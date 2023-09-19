@@ -7,18 +7,18 @@ import com.ister.repository.LocationJdbcRepositoryImpl;
 import java.util.*;
 
 public class LocationService {
-    LocationJdbcRepositoryImpl locationJdbcRepositoryImpl;
+    LocationJdbcRepositoryImpl locationRepository;
 
     public LocationService() {
-        this.locationJdbcRepositoryImpl = new LocationJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
+        this.locationRepository = new LocationJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
 
     public RequestStatus addLocation(Location location) {
-        if (locationJdbcRepositoryImpl.findById(location.getId()).isPresent()) {
+        if (locationRepository.findById(location.getId()).isPresent()) {
             System.out.println("The location already exists\nOperation failed");
             return RequestStatus.Failed;
         } else {
-            if (locationJdbcRepositoryImpl.create(location)) {
+            if (locationRepository.create(location)) {
                 System.out.println("Location added successfully");
                 return RequestStatus.Successful;
             } else {
@@ -30,8 +30,8 @@ public class LocationService {
     }
 
     public RequestStatus editLocation(Location location) {
-        if (locationJdbcRepositoryImpl.findById(location.getId()).isPresent()) {
-            if (locationJdbcRepositoryImpl.update(location)) {
+        if (locationRepository.findById(location.getId()).isPresent()) {
+            if (locationRepository.update(location)) {
                 System.out.println("the location updated successfully");
                 return RequestStatus.Successful;
             } else {
@@ -45,8 +45,8 @@ public class LocationService {
     }
 
     public RequestStatus deleteLocation(Location location) {
-        if (locationJdbcRepositoryImpl.findById(location.getId()).isPresent()) {
-            if (locationJdbcRepositoryImpl.delete(location)) {
+        if (locationRepository.findById(location.getId()).isPresent()) {
+            if (locationRepository.delete(location)) {
                 System.out.println("the location deleted successfully");
                 return RequestStatus.Successful;
             } else {
@@ -60,7 +60,7 @@ public class LocationService {
     }
 
     public String getLocationData(Long id) {
-        Optional<Location> locationOptional = locationJdbcRepositoryImpl.findById(id);
+        Optional<Location> locationOptional = locationRepository.findById(id);
         return locationOptional.map(location -> String.format("""
                         Location ID : %d
                         Province : %s
@@ -77,7 +77,7 @@ public class LocationService {
 
     public String getAllLocations() {
         Location location;
-        List<Location> locationList = locationJdbcRepositoryImpl.getAll();
+        List<Location> locationList = locationRepository.getAll();
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < locationList.size(); i++) {
