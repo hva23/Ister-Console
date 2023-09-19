@@ -5,8 +5,8 @@ import java.util.Date;
 public class BaseEntity<PK > {
 
     private PK id;
-    private Date createdDate;
-    private Date lastModifiedDate;
+    private String createdDate;
+    private String lastModifiedDate;
 
     public PK getId() {
         return id;
@@ -16,19 +16,19 @@ public class BaseEntity<PK > {
         this.id = id;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getLastModifiedDate() {
+    public String getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(String lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 }
