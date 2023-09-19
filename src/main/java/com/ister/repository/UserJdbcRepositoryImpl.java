@@ -71,6 +71,8 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
     }
 
     public boolean update(User user) {
+        java.util.Date date = new java.util.Date();
+        String currentDateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
         try (Connection con = DriverManager.getConnection(rawUrl, username, password);
              Statement statement = con.createStatement();) {
 
@@ -84,7 +86,7 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
             columnAndValues.put("EMAIL", user.getEmail());
             columnAndValues.put("PHONE_NUMBER", user.getPhoneNumber());
             columnAndValues.put("CREATED_DATE", user.getCreatedDate());
-            columnAndValues.put("LAST_MODIFIED_DATE", user.getLastModifiedDate());
+            columnAndValues.put("LAST_MODIFIED_DATE", currentDateTime);
 
             conditions.put("UUID", user.getId());
 
