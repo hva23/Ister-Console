@@ -31,7 +31,7 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
             boolean result;
             String query;
 
-            Object[] obj = read("LOCATION", new String[]{"ID"}, null);
+            Object[] obj = read(TABLE_NAME, new String[]{"ID"}, null);
 
             resultSet = (ResultSet) obj[0];
             statement = (Statement) obj[2];
@@ -49,7 +49,7 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
                     location.getLongitude()
             };
 
-            query = queryBuilder.create("LOCATION", values);
+            query = queryBuilder.create(TABLE_NAME, values);
 
             result = statement.executeUpdate(query) > 0;
 
@@ -77,7 +77,7 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
 
             condition.put("ID", location.getId().toString());
 
-            query = queryBuilder.delete("Location", condition);
+            query = queryBuilder.delete(TABLE_NAME, condition);
 
             return statement.executeUpdate(query) > 0;
         } catch (Exception ex) {
