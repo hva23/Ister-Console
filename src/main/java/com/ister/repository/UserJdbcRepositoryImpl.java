@@ -129,7 +129,7 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
     public Optional<User> findById(String id) {
         try {
             ResultSet resultSet;
-            User user = new User();
+            User user;
             Map<String, Object> condition = new HashMap<>();
 
             condition.put("UUID", id);
@@ -157,7 +157,7 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
             Map<String, Object> condition = new HashMap<>();
 
             condition.put("USERNAME", username);
-            Object[] obj = read("USERS", null, condition);
+            Object[] obj = read(TABLE_NAME, null, condition);
 
             resultSet = (ResultSet) obj[0];
 
