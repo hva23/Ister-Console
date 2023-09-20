@@ -19,7 +19,7 @@ public class ThingsService {
     }
 
     public RequestStatus addThing(Things thing) {
-        if (thingsRepository.findById(thing.getId()).isPresent()) {
+        if (thing.getId() != null && thingsRepository.findById(thing.getId()).isPresent()) {
             System.out.println("The thing/product already exists\nOperation failed");
             return RequestStatus.Failed;
         } else {
@@ -92,10 +92,11 @@ public class ThingsService {
     public String getThingData(String serialNumber) {
         Optional<Things> thingOptional = thingsRepository.findBySerialNumber(serialNumber);
         if (thingOptional.isPresent()) {
-
+            User user = thingOptional.get().getUser();
             Location location = thingOptional.get().getLocation();
             StringBuilder telemetryData = new StringBuilder();
             Map<String, Object> telemetryDataSet;
+
             if (thingOptional.get().getTelemetryData() != null) {
                 telemetryDataSet = thingOptional.get().getTelemetryData().getData();
 
@@ -105,29 +106,42 @@ public class ThingsService {
                     telemetryData.append(data.getValue());
                 }
             }
+
+            //If location fields are null, then fill it
+            if(location.getLatitude() == null) {
+                LocationService locationService = new LocationService();
+                location = locationService.getLocation(thingOptional.get().getLocation().getId());
+            }
+
+            //If user fields are null, then fill it
+            if(user.getUsername() == null) {
+                UserService userService = new UserService();
+                user = userService.getUser(thingOptional.get().getUser().getId());
+            }
+
             return String.format("""
                             Thing name : %s
                             Thing ID : %d
                             Thing serial number : %s
                             Thing location (latitude, longitude) : %s(%.2f, %.2f)
-                            Thing owner (username, ID) : %s , %s
+                            Thing owner Username(ID) : %s(%s)
                             Telemetry data : %s
                             """,
                     thingOptional.get().getName(),
                     thingOptional.get().getId(),
                     thingOptional.get().getSerialNumber(),
-                    location.getName(),
+                    (location.getName() == null ? location.getProvince() : location.getName()),
                     location.getLatitude(),
                     location.getLongitude(),
-                    thingOptional.get().getUser().getUsername(),
-                    thingOptional.get().getUser().getId(),
+                    user.getUsername(),
+                    user.getId(),
                     telemetryData);
         }
         return null;
 
     }
 
-    public String getAllThings() {
+    public String getAllThingsData() {
         Things things;
         List<Things> thingsList = thingsRepository.getAll();
         StringBuilder stringBuilder = new StringBuilder();
@@ -160,7 +174,7 @@ public class ThingsService {
 
 
 
-    public String getUserThing(User user) {
+    public String getUserThingData(User user) {
         Things things;
         List<Things> thingsList = thingsRepository.findByUser(user);
         StringBuilder stringBuilder = new StringBuilder();
@@ -193,6 +207,10 @@ public class ThingsService {
         }
 
         return stringBuilder.toString();
+    }
+
+    public List<Things> getUserThing(User user) {
+        return thingsRepository.findByUser(user);
     }
 
     public TelemetryData getTelemetryData(Things thing) {
