@@ -17,6 +17,7 @@ public class ThingsService {
     public ThingsService() {
         this.thingsRepository = new ThingsJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
+
     public RequestStatus addThing(Things thing) {
         if (thingsRepository.findById(thing.getId()).isPresent()) {
             System.out.println("The thing/product already exists\nOperation failed");
@@ -84,8 +85,10 @@ public class ThingsService {
                 location.getLongitude(),
                 thing.getUser().getUsername(),
                 thing.getUser().getId()/*,
-                telemetryData);*/return null;
+                telemetryData);*/
+        return null;
     }
+
     public String getThingData(String serialNumber) {
         Optional<Things> thingOptional = thingsRepository.findBySerialNumber(serialNumber);
         if (thingOptional.isPresent()) {
@@ -93,7 +96,7 @@ public class ThingsService {
             Location location = thingOptional.get().getLocation();
             StringBuilder telemetryData = new StringBuilder();
             Map<String, Object> telemetryDataSet;
-            if(thingOptional.get().getTelemetryData() != null) {
+            if (thingOptional.get().getTelemetryData() != null) {
                 telemetryDataSet = thingOptional.get().getTelemetryData().getData();
 
                 for (Map.Entry<String, Object> data : telemetryDataSet.entrySet()) {
@@ -124,8 +127,72 @@ public class ThingsService {
 
     }
 
-    public List<Things> getUserThing(User user) {
-        return thingsRepository.findByUser(user);
+    public String getAllThings() {
+        Things things;
+        List<Things> thingsList = thingsRepository.getAll();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < thingsList.size(); i++) {
+            String serialNumber;
+            String createdDate;
+            things = thingsList.get(i);
+            serialNumber = things.getSerialNumber();
+            createdDate = things.getCreatedDate();
+            stringBuilder.append(String.format("""
+                            -- #%02d --
+                            Thing ID : %s
+                            Product name : %s
+                            Serial number : %s
+                            Purchase date : %s
+                            Purchase time : %s
+                            
+                            """,
+                    i + 1,
+                    things.getId(),
+                    (serialNumber.substring(0, 3).contentEquals("100") ? "eCam" : "Touch Switch"),
+                    serialNumber,
+                    createdDate.split(" ")[0],
+                    createdDate.split(" ")[1]));
+        }
+
+        return stringBuilder.toString();
+    }
+
+
+
+    public String getUserThing(User user) {
+        Things things;
+        List<Things> thingsList = thingsRepository.findByUser(user);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if(thingsList == null)
+            return "This user doesn't exist or doesn't purchase any product";
+        for (int i = 0; i < thingsList.size(); i++) {
+            String serialNumber;
+            String createdDate;
+            things = thingsList.get(i);
+            serialNumber = things.getSerialNumber();
+            createdDate = things.getCreatedDate();
+            stringBuilder.append(String.format("""
+                            -- #%02d --
+                            Username : %s
+                            Thing ID : %s
+                            Product name : %s
+                            Serial number : %s
+                            Purchase date : %s
+                            Purchase time : %s
+                            
+                            """,
+                    i + 1,
+                    user.getUsername(),
+                    things.getId(),
+                    (serialNumber.substring(0, 3).contentEquals("100") ? "eCam" : "Touch Switch"),
+                    serialNumber,
+                    createdDate.split(" ")[0],
+                    createdDate.split(" ")[1]));
+        }
+
+        return stringBuilder.toString();
     }
 
     public TelemetryData getTelemetryData(Things thing) {
