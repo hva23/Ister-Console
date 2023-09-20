@@ -129,7 +129,29 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
     @Override
     public List<Things> getAll() {
-        return null;
+        try {
+            Things things;
+            List<Things> userList = new ArrayList<>();
+            Object[] obj;
+
+            obj = read(TABLE_NAME, null, null);
+
+            do {
+                things = setThingFields((ResultSet) obj[0]);
+
+                userList.add(things);
+            }
+            while (((ResultSet) obj[0]).next());
+
+            ((ResultSet) obj[0]).close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return userList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -184,14 +206,46 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
 
     public List<Things> findByUser(User user) {
-        return null;
+        try {
+            Things things;
+            List<Things> userList = new ArrayList<>();
+            Map<String, Object> condition = new HashMap<>();
+            Object[] obj;
+
+            if(user.getId() != null)
+                condition.put("USER_ID", user.getId());
+            else
+                return null;
+
+            obj = read(TABLE_NAME, null, condition);
+
+            do {
+                things = setThingFields((ResultSet) obj[0]);
+
+                userList.add(things);
+            }
+            while (((ResultSet) obj[0]).next());
+
+            ((ResultSet) obj[0]).close();
+            ((Statement) obj[2]).close();
+            ((Connection) obj[1]).close();
+
+            return userList;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
 
     private Things setThingFields(ResultSet resultSet) throws SQLException {
         Things thing = new Things();
+
         thing.setId(resultSet.getLong("ID"));
         thing.setName(resultSet.getString("NAME"));
         thing.setSerialNumber(resultSet.getString("SERIAL_NUMBER"));
+        thing.setCreatedDate(resultSet.getString("CREATED_DATE"));
+
+        return thing;
     }
 }
