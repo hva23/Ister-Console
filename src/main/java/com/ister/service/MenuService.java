@@ -93,6 +93,7 @@ public class MenuService {
 
             } else if (inputResult.contentEquals("3")) {
 
+                TelemetryDataService telemetryDataService = new TelemetryDataService();
                 TelemetryData telemetryData = new TelemetryData();
                 Map<String, Object> data = new HashMap<>();
                 Things thing = new Things();
@@ -111,7 +112,8 @@ public class MenuService {
                 data.put(in.next(), in.next());
 
                 telemetryData.setData(data);
-                thingsService.sendTelemetryData(telemetryData);
+                //thingsService.sendTelemetryData(telemetryData); //for InMemory repository
+                telemetryDataService.addTelemetryData(telemetryData);
 
             } else if (inputResult.contentEquals("exit")) {
                 System.out.println("Closing...");
@@ -228,35 +230,7 @@ public class MenuService {
                     }
                 }
                 case "4" -> {                                   //show things
-                    List<Things> things = thingsService.getUserThing(user);
-                    for(Things thing : things)
-                        System.out.println(thingsService.getThingData(thing.getSerialNumber()));
-                    /*
-                    Location location;
-                    for (int i = 0; i < things.size(); i++) {
-                        location = things.get(i).getLocation();
-                        System.out.printf("""
-                                                                    
-                                        no %d
-                                        Thing name : %s
-                                        Thing ID : %d
-                                        Thing serial number : %s
-                                        Thing location (latitude, longitude) : %s(%.2f, %.2f)
-                                        Thing owner (username, ID) : %s , %d
-                                                                    
-                                        """,
-                                i,
-                                things.get(i).getName(),
-                                things.get(i).getId(),
-                                things.get(i).getSerialNumber(),
-                                location.getName(),
-                                location.getLatitude(),
-                                location.getLongitude(),
-                                things.get(i).getUser().getUsername(),
-                                things.get(i).getUser().getId());
-                    }
-
-                     */
+                    System.out.println(thingsService.getUserThing(user));
                 }
                 case "5" -> {                                   //edit current user profile
 
