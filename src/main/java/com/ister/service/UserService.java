@@ -25,7 +25,7 @@ public class UserService {
             System.out.printf("A user exists with this ID : %s\n", user.getId());
             return RequestStatus.Failed;
         } else {
-            return  userRepository.create(user) ? RequestStatus.Successful : RequestStatus.Failed;
+            return userRepository.create(user) ? RequestStatus.Successful : RequestStatus.Failed;
         }
     }
 
@@ -60,6 +60,15 @@ public class UserService {
     public RequestStatus delete(User user) {
         Optional<User> usr = userRepository.findById(user.getId());
         if (usr.isPresent()) {
+            //Delete all user's things
+            ThingsService thingsService = new ThingsService();
+            List<Things> thingsList = thingsService.getUserThing(user);
+            for (Things thing : thingsList) {
+                if (thingsService.deleteThing(thing) != RequestStatus.Successful) {
+                    System.out.println("Something went wrong!");
+                    return RequestStatus.Failed;
+                }
+            }
             if (userRepository.delete(user)) {
                 System.out.println("the user deleted successfully");
                 return RequestStatus.Successful;
