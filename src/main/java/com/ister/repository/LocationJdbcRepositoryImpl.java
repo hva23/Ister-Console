@@ -36,10 +36,11 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
             resultSet = (ResultSet) obj[0];
             statement = (Statement) obj[2];
 
-            while (resultSet.next()) {
+            do {
                 if (resultSet.getLong("ID") > lastLocationId)
                     lastLocationId = resultSet.getLong("ID");
             }
+            while (resultSet.next());
 
             values = new Object[]{
                     lastLocationId + 1,
@@ -152,7 +153,9 @@ public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Lon
 
             conditions.put("ID", id);
 
-            Object[] obj = read("LOCATION", null, conditions);
+            Object[] obj = read(TABLE_NAME, null, conditions);
+            if (obj == null)
+                return Optional.empty();
 
             location = setLocationFields((ResultSet) obj[0]);
 
