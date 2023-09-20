@@ -23,7 +23,7 @@ public class MenuService {
         while (true) {
             userList = login();
             if (!userList.contains(UserStatus.Null)) {
-                userOptions((Long) userList.get(1));
+                userOptions((String) userList.get(1));
             }
         }
     }
@@ -31,6 +31,7 @@ public class MenuService {
     private List<Object> login() {
         User user = new User();
         List<Object> userList = new ArrayList<>();
+        java.util.Date date = new java.util.Date();
 
         while (true) { //sign in and login loop
             System.out.println("""
@@ -55,9 +56,9 @@ public class MenuService {
                 user.setEmail(in.next());
 
                 /* created date and id assigning */
-                user.setId(100L + userId);
-                userId++;   //for next user creation
-                user.setCreatedDate(new Date(2023, Calendar.SEPTEMBER, 9));
+                user.setId(UUID.randomUUID().toString());
+                user.setCreatedDate(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+
 
                 if (userService.signUp(user) == RequestStatus.Successful) {
                     System.out.println("your account successfully created");
@@ -81,9 +82,10 @@ public class MenuService {
                 user.setPassword(in.next());
 
                 if (userService.login(user) == RequestStatus.Successful) {
-                    System.out.println(userService.getUserData(user.getUsername()));
+                    User u = userService.getUserByUsername(user.getUsername());
+                    System.out.println(userService.getUserData(u));
                     userList.add(0, UserStatus.LoggedIn);
-                    userList.add(1, userService.getUser(user.getUsername()).getId());
+                    userList.add(1, u.getId());
                     return userList;
                 }
                 userList.add(0, UserStatus.Null);
@@ -101,7 +103,7 @@ public class MenuService {
                 try {
                     thing = (Things) thingsService.getThing(inputResult).clone();
                 } catch (Exception ex) {
-                    System.out.println(ex);
+                    ex.printStackTrace();
                 }
 
                 telemetryData.setThing(thing);
@@ -120,12 +122,12 @@ public class MenuService {
         }
     }
 
-    private UserStatus userOptions(Long userId) {
+    private UserStatus userOptions(String userId) {
         User user = new User();
         try {
             user = (User) userService.getUser(userId).clone();
         } catch (Exception ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
 
         //user control loop
@@ -147,7 +149,7 @@ public class MenuService {
                 case "1" -> userService.forgotPassword(user);   //forgot password
                 case "2" -> {                                   //delete user
                     if (userService.delete(user) == RequestStatus.Successful) {
-                        Long id = user.getId();
+                        String id = user.getId();
                         if (userService.getUser(id) == null) {
                             System.out.println("User deleted");
                             user.setId(null);
@@ -166,30 +168,38 @@ public class MenuService {
                 case "3" -> {
                     Things thing = new Things();
                     Location location = new Location();
-                    Map<String, Object> attributes = new HashMap<String, Object>();
+//                    Map<String, Object> attributes = new HashMap<>();
 
+                    in.nextLine();
                     /* thing name */
                     System.out.print("Enter thing name : ");
-                    thing.setName(in.next());
+                    thing.setName(in.nextLine());
 
                     /* serial number */
                     System.out.print("Enter serial number : ");
                     thing.setSerialNumber(in.next());
 
-                    /* thing location */
-                    System.out.println("Enter thing location");
 
-                    /* latitude */
-                    System.out.print("location latitude: ");
-                    location.setLatitude(in.nextDouble());
+//                    /* thing location */
+//                    System.out.println("Enter thing location");
+//
+//                    /* latitude */
+//                    System.out.print("location latitude: ");
+//                    location.setLatitude(in.nextDouble());
+//
+//                    /* longitude */
+//                    System.out.print("location longitude : ");
+//                    location.setLongitude(in.nextDouble());
+//
+//                    /* name the location */
+//                    System.out.print("name thing location : ");
+//                    location.setName(in.next());
+                    System.out.println("Enter one of these cities :\n" +
+                            "1. Tehran\\ Tehran\n" +
+                            "2. Mashhad\\ Mashhad\n" +
+                            "3. Gilan\\ Amlash");
 
-                    /* longitude */
-                    System.out.print("location longitude : ");
-                    location.setLongitude(in.nextDouble());
-
-                    /* name the location */
-                    System.out.print("name thing location : ");
-                    location.setName(in.next());
+                    location.setId(in.nextLong());
 
                     /* set thing */
                     location.setThing(thing);
@@ -197,19 +207,17 @@ public class MenuService {
 
                     /* user assigning */
                     thing.setUser(userService.getUser(userId));
+//
+//                    /* version and color as attributes */
+//                    System.out.print("Enter thing color : ");
+//                    attributes.put("Color", in.next());
+//
+//                    System.out.print("Enter thing version : ");
+//                    attributes.put("Version", in.next());
+//                    thing.setAttributes(attributes);
 
-                    /* version and color as attributes */
-                    System.out.print("Enter thing color : ");
-                    attributes.put("Color", in.next());
-
-                    System.out.print("Enter thing version : ");
-                    attributes.put("Version", in.next());
-                    thing.setAttributes(attributes);
-
-                    /* created date and id assigning */
-                    thing.setId(100L + thingId);
-                    thingId++;      //for next thing creation
-                    thing.setCreatedDate(new Date(2023, Calendar.SEPTEMBER, 9));
+                    /* created date */
+                    thing.setCreatedDate(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
 
                     if (thingsService.addThing(thing) == RequestStatus.Successful) {
                         System.out.println("thing successfully added");
