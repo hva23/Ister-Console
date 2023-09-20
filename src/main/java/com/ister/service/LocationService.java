@@ -2,6 +2,7 @@ package com.ister.service;
 
 import com.ister.common.RequestStatus;
 import com.ister.domain.Location;
+import com.ister.domain.Things;
 import com.ister.repository.LocationJdbcRepositoryImpl;
 
 import java.util.*;
@@ -72,6 +73,11 @@ public class LocationService {
                 location.getCity(),
                 location.getLatitude(),
                 location.getLongitude())).orElse("Location doesn't exist");
+    }
+
+    public Location getLocation(Long id) {
+        Optional<Location> locationOptional = locationRepository.findById(id);
+        return locationOptional.orElse(null);
     }
 
     public String getAllLocations() {
