@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
@@ -28,6 +29,9 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
     @Override
     public boolean create(Things thing) {
         try {
+            java.util.Date date = new Date();
+            String dateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+
             QueryBuilder queryBuilder = new QueryBuilder();
             ResultSet resultSet;
             Statement statement;
@@ -43,10 +47,11 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
             resultSet = (ResultSet) obj[0];
             statement = (Statement) obj[2];
 
-            while (resultSet.next()) {
+            do {
                 if (resultSet.getLong("ID") > lastUserProductsId)
                     lastUserProductsId = resultSet.getLong("ID");
-            }//End
+            }
+            while (resultSet.next());//End
 
             //Because we just have 2 product
             productId = thing.getSerialNumber().substring(0, 3).contentEquals("100") ? 1 : 2;
@@ -57,7 +62,8 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
                     thing.getSerialNumber(),
                     thing.getUser().getId(),
                     productId,
-                    thing.getLocation().getId()
+                    thing.getLocation().getId(),
+                    dateTime
             };
 
             query = queryBuilder.create(TABLE_NAME, values);
@@ -164,6 +170,9 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
             condition.put("ID", id);
             Object[] obj = read(TABLE_NAME, null, condition);
 
+            if(obj == null)
+                return Optional.empty();
+
             resultSet = (ResultSet) obj[0];
 
             thing = setThingFields(resultSet);
@@ -212,7 +221,7 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
             Map<String, Object> condition = new HashMap<>();
             Object[] obj;
 
-            if(user.getId() != null)
+            if (user.getId() != null)
                 condition.put("USER_ID", user.getId());
             else
                 return null;
@@ -240,10 +249,17 @@ public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
 
     private Things setThingFields(ResultSet resultSet) throws SQLException {
         Things thing = new Things();
+        Location location = new Location();
+        User user = new User();
+
+        user.setId(resultSet.getString("USER_ID"));
+        location.setId(resultSet.getLong("LOCATION_ID"));
 
         thing.setId(resultSet.getLong("ID"));
         thing.setName(resultSet.getString("NAME"));
         thing.setSerialNumber(resultSet.getString("SERIAL_NUMBER"));
+        thing.setLocation(location);
+        thing.setUser(user);
         thing.setCreatedDate(resultSet.getString("CREATED_DATE"));
 
         return thing;
