@@ -1,8 +1,11 @@
 package com.ister.repository;
 
+import com.ister.common.RequestStatus;
 import com.ister.domain.Location;
+import com.ister.domain.Things;
 import com.ister.domain.User;
 import com.ister.service.QueryBuilder;
+import com.ister.service.ThingsService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,7 +136,10 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
             Map<String, Object> condition = new HashMap<>();
 
             condition.put("UUID", id);
-            Object[] obj = read("USERS", null, condition);
+            Object[] obj = read(TABLE_NAME, null, condition);
+
+            if(obj == null)
+                return Optional.empty();
 
             resultSet = (ResultSet) obj[0];
 
@@ -159,6 +165,8 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
             condition.put("USERNAME", username);
             Object[] obj = read(TABLE_NAME, null, condition);
 
+            if(obj == null)
+                return Optional.empty();
             resultSet = (ResultSet) obj[0];
 
             user = setUserFields(resultSet);
