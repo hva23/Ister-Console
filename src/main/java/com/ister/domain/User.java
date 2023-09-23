@@ -2,6 +2,7 @@ package com.ister.domain;
 
 import java.util.Objects;
 
+
 public class User  extends BaseEntity<String> implements Cloneable{
     private String username;
     private String password;

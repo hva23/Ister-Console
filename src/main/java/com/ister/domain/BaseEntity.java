@@ -2,7 +2,7 @@ package com.ister.domain;
 
 import java.util.Date;
 
-public class BaseEntity<PK > {
+public class BaseEntity<PK> {
 
     private PK id;
     private String createdDate;
