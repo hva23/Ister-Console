@@ -1,26 +1,22 @@
 package com.ister.repository;
 
 import com.ister.domain.Location;
-import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.domain.User;
 import com.ister.service.QueryBuilder;
-import com.ister.service.ThingsService;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
-public class ThingsJdbcRepositoryImpl implements BaseRespository<Things, Long> {
+public class ThingsJdbcRepository implements BaseRespository<Things, Long> {
 
     private final String rawUrl;
     private final String username;
     private final String password;
     private final String TABLE_NAME = "USER_PRODUCTS";
 
-    public ThingsJdbcRepositoryImpl(String rawUrl, String username, String password) {
+    public ThingsJdbcRepository(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
         this.username = username;
         this.password = password;
