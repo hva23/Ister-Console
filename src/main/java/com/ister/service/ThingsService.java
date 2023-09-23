@@ -5,17 +5,15 @@ import com.ister.domain.Location;
 import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.domain.User;
-import com.ister.repository.ThingsInMemoryRepositoryImpl;
-import com.ister.repository.ThingsJdbcRepositoryImpl;
-import com.sun.source.tree.BreakTree;
+import com.ister.repository.ThingsJdbcRepository;
 
 import java.util.*;
 
 public class ThingsService {
-    ThingsJdbcRepositoryImpl thingsRepository;
+    ThingsJdbcRepository thingsRepository;
 
     public ThingsService() {
-        this.thingsRepository = new ThingsJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
+        this.thingsRepository = new ThingsJdbcRepository("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
 
     public RequestStatus addThing(Things thing) {
