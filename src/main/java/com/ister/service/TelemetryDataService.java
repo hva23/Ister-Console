@@ -1,15 +1,14 @@
 package com.ister.service;
 
 import com.ister.common.RequestStatus;
-import com.ister.domain.Location;
 import com.ister.domain.TelemetryData;
-import com.ister.repository.TelemetryDataJdbcRepositoryImpl;
+import com.ister.repository.TelemetryDataJdbcRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TelemetryDataService {
-    TelemetryDataJdbcRepositoryImpl telemetryDataRepository = new TelemetryDataJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
+    TelemetryDataJdbcRepository telemetryDataRepository = new TelemetryDataJdbcRepository("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
 
     public RequestStatus addTelemetryData(TelemetryData telemetryData) {
         if (telemetryDataRepository.findById(telemetryData.getId()).isPresent()) {
