@@ -1,6 +1,5 @@
 package com.ister.repository;
 
-import com.ister.domain.Location;
 import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.service.QueryBuilder;
@@ -9,13 +8,13 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
-public class TelemetryDataJdbcRepositoryImpl implements BaseRespository<TelemetryData, Long> {
+public class TelemetryDataJdbcRepository implements BaseRespository<TelemetryData, Long> {
     final private String rawUrl;
     final private String username;
     final private String password;
     final private String TABLE_NAME = "TELEMETRY_DATA";
 
-    public TelemetryDataJdbcRepositoryImpl(String rawUrl, String username, String password) {
+    public TelemetryDataJdbcRepository(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
         this.username = username;
         this.password = password;
