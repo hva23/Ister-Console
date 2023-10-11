@@ -1,18 +1,12 @@
 package com.ister.repository;
 
-import com.ister.common.RequestStatus;
-import com.ister.domain.Location;
-import com.ister.domain.Things;
 import com.ister.domain.User;
 import com.ister.service.QueryBuilder;
-import com.ister.service.ThingsService;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.*;
 
-public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
+public class UserJdbcRepository implements BaseRespository<User, String> {
 
     private final String rawUrl;
     private final String username;
@@ -20,7 +14,7 @@ public class UserJdbcRepositoryImpl implements BaseRespository<User, String> {
 
     private final String TABLE_NAME = "USERS";
 
-    public UserJdbcRepositoryImpl(String rawUrl, String username, String password) {
+    public UserJdbcRepository(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
         this.username = username;
         this.password = password;
