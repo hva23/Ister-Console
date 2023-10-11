@@ -2,19 +2,18 @@ package com.ister.repository;
 
 import com.ister.domain.Location;
 import com.ister.service.QueryBuilder;
-import com.mysql.cj.jdbc.ConnectionImpl;
 
 import java.sql.*;
 import java.util.*;
 
-public class LocationJdbcRepositoryImpl implements BaseRespository<Location, Long> {
+public class LocationJdbcRepository implements BaseRespository<Location, Long> {
     final private String rawUrl;
     final private String username;
     final private String password;
     final private String TABLE_NAME = "LOCATION";
 
 
-    public LocationJdbcRepositoryImpl(String rawUrl, String username, String password) {
+    public LocationJdbcRepository(String rawUrl, String username, String password) {
         this.rawUrl = rawUrl;
         this.username = username;
         this.password = password;
