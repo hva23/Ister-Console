@@ -1,6 +1,5 @@
 package com.ister.repository;
 
-import com.ister.domain.TelemetryData;
 import com.ister.domain.Things;
 import com.ister.domain.User;
 
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ThingsInMemoryRepositoryImpl implements BaseRespository<Things, Long> {
+public class ThingsInMemoryRepository implements BaseRespository<Things, Long> {
 
     List<Things> thingsInMemory = new ArrayList<>();
 
