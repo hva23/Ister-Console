@@ -1,7 +1,6 @@
 package com.ister.service;
 
 import com.ister.common.RequestStatus;
-import com.ister.domain.Location;
 import com.ister.domain.Things;
 import com.ister.domain.User;
 import com.ister.repository.*;
@@ -11,12 +10,12 @@ import java.util.Optional;
 
 public class UserService {
 
-    private UserJdbcRepositoryImpl userRepository;
+    private UserJdbcRepository userRepository;
 
     public UserService() {
         //this.userRepository = new UserInMemoryRepositoryImpl();
         //this.thingsRepository = new ThingsInMemoryRepositoryImpl();
-        this.userRepository = new UserJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
+        this.userRepository = new UserJdbcRepository("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
 
     public RequestStatus signUp(User user) {
