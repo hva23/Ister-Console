@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserInMemoryRepositoryImpl implements BaseRespository<User, String> {
+public class UserInMemoryRepository implements BaseRespository<User, String> {
 
 
     private List<User> usersInMemory = new ArrayList<>();
