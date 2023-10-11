@@ -2,16 +2,15 @@ package com.ister.service;
 
 import com.ister.common.RequestStatus;
 import com.ister.domain.Location;
-import com.ister.domain.Things;
-import com.ister.repository.LocationJdbcRepositoryImpl;
+import com.ister.repository.LocationJdbcRepository;
 
 import java.util.*;
 
 public class LocationService {
-    LocationJdbcRepositoryImpl locationRepository;
+    LocationJdbcRepository locationRepository;
 
     public LocationService() {
-        this.locationRepository = new LocationJdbcRepositoryImpl("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
+        this.locationRepository = new LocationJdbcRepository("jdbc:mysql://localhost:8080/Ister", "root", "v@h@bI2442");
     }
 
     public RequestStatus addLocation(Location location) {
